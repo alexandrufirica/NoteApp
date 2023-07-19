@@ -1,7 +1,7 @@
 package org.portofolio;
 
 /**
- * Hello world!
+ * This app is a note application.
  *
  */
 public class App 

@@ -7,44 +7,58 @@ import java.awt.event.*;
 
 public class NoteWindow extends JFrame implements  ActionListener, WindowListener, MouseListener {
 
-    JTextArea textArea = new JTextArea();
+    JTextArea textArea;
     File file;
     JPopupMenu popupmenu;
     JScrollPane scrollPaneText;
 
     public NoteWindow(){
-
+        //Set font
         Font fnt = new Font("Arial", Font.PLAIN,20);
-        Container container = getContentPane();
-        JMenuBar menuBar = new JMenuBar();
 
-        JMenu jmfile = new JMenu("FIle");
-        JMenu jmedit = new JMenu("Edit");
-        JMenu jmhelp = new JMenu("Help");
-
-        container.setLayout(new BorderLayout());
-        scrollPaneText = new JScrollPane(textArea);
-        scrollPaneText.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPaneText.setVisible(true);
-
+        //Create and setup text area
+        textArea = new JTextArea();
         textArea.setFont(fnt);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
 
-        container.add(scrollPaneText);
+        Container container = getContentPane();
+        container.setLayout(new BorderLayout());
 
+        //Create scrolabale text area
+        scrollPaneText = new JScrollPane(textArea);
+        scrollPaneText.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPaneText.setVisible(true);
+
+        //Create menuBar and tabs
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu jmfile = new JMenu("File");
+        JMenu jmedit = new JMenu("Edit");
+        JMenu jmhelp = new JMenu("Help");
+
+        //Create File menu buttons
         createMenuItem(jmfile, "New");
         createMenuItem(jmfile, "Open");
         createMenuItem(jmfile, "Save");
         jmfile.addSeparator();
         createMenuItem(jmfile, "Exit");
 
+        //Create Edit menu buttons
         createMenuItem(jmedit, "Cut");
         createMenuItem(jmedit, "Copy");
         createMenuItem(jmedit, "Paste");
 
-        createMenuItem(jmhelp, "About NotePad");
+        //Create Help menu buttons
+        createMenuItem(jmhelp, "About Note App");
 
+        //Add menu bar tabs
+        menuBar.add(jmfile);
+        menuBar.add(jmedit);
+        menuBar.add(jmhelp);
+        setJMenuBar(menuBar);
+
+        //PopUp menu : create, add ,setup muouse listener
         popupmenu = new JPopupMenu("Edit");
         JMenuItem cut = new JMenuItem("Cut");
         cut.addActionListener(this);
@@ -55,40 +69,34 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
         popupmenu.add(cut);
         popupmenu.add(copy);
         popupmenu.add(paste);
+
+        //Add to text area PopUp menu and Mouse Listeners
         textArea.add(popupmenu);
         textArea.addMouseListener(this);
 
+        container.add(scrollPaneText);
 
-        menuBar.add(jmfile);
-        menuBar.add(jmedit);
-        menuBar.add(jmhelp);
-
-        setJMenuBar(menuBar);
-
+        //Frame properties
         setIconImage(Toolkit.getDefaultToolkit().getImage("NoteAppIcon.png"));
         addWindowListener(this);
         setSize(500,500);
-        setTitle("Untitled.txt - NotePad");
+        setTitle("Untitled.txt - Note App");
         setVisible(true);
 
     }
 
+    //Method which create a new menu item
     public void createMenuItem( JMenu jm, String txt){
         JMenuItem jmi = new JMenuItem(txt);
         jmi.addActionListener(this);
         jm.add(jmi);
     }
 
-    public void createMenuItem( JPopupMenu jm, String txt){
-        JMenuItem jmi = new JMenuItem(txt);
-        jmi.addMouseListener(this);
-        jm.add(jmi);
-    }
 
     public void actionPerformed(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         if (e.getActionCommand().equals("New")) {
-            this.setTitle("Utitled.txt - NotePad");
+            this.setTitle("Utitled.txt - Note App");
             textArea.setText("");
             file = null;
         } else if (e.getActionCommand().equals("Open")) {
@@ -97,10 +105,10 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
                 try {
                     File selectedFile = fileChooser.getSelectedFile();
                     OpenFile(selectedFile.getAbsolutePath());
-                    this.setTitle(selectedFile.getName() + " - NotePad");
+                    this.setTitle(selectedFile.getName() + " - Note App");
                     file = selectedFile;
-                } catch (IOException ets) {
-
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         } else if (e.getActionCommand().equals("Save")) {
@@ -116,10 +124,10 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
                 try {
                     File selectedFile = fileChooser.getSelectedFile();
                     SaveFile(selectedFile.getAbsolutePath());
-                    this.setTitle(selectedFile.getName() + " - NotePad");
+                    this.setTitle(selectedFile.getName() + " - Notea App");
                     file = selectedFile;
-                } catch (Exception ete) {
-
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         } else if (e.getActionCommand().equals("Exit")) {
@@ -130,16 +138,13 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
             textArea.paste();
         } else if (e.getActionCommand().equals("Cut")) {
             textArea.cut();
-        } else if (e.getActionCommand().equals("About NotePad")) {
-            JOptionPane.showMessageDialog(this, "Created by: Alexandru Firica", "NotePad", JOptionPane.INFORMATION_MESSAGE);
-        }else if (e.getActionCommand().equals(MouseEvent.MOUSE_CLICKED)){
-
-
+        } else if (e.getActionCommand().equals("About Note App")) {
+            JOptionPane.showMessageDialog(this, "Created by: Alexandru Firica", "Note App", JOptionPane.INFORMATION_MESSAGE);
         }
-
 
     }
 
+    //Method used to open a file
     public void OpenFile (String fname) throws IOException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fname)));
         String load;
@@ -153,6 +158,7 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
         reader.close();
     }
 
+    //Method used to save a file
     public void SaveFile(String fname) throws IOException{
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
         DataOutputStream output = new DataOutputStream(new FileOutputStream(fname));
@@ -183,9 +189,7 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
             popupmenu.show(textArea, e.getX(), e.getY());
-
     }
 
     @Override
