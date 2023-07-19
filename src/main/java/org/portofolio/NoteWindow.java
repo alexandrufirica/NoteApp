@@ -189,7 +189,9 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if( e.getButton() == MouseEvent.BUTTON3) {
             popupmenu.show(textArea, e.getX(), e.getY());
+        }
     }
 
     @Override
