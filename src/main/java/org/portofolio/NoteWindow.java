@@ -9,6 +9,8 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
 
     JTextArea textArea = new JTextArea();
     File file;
+    JPopupMenu popupmenu;
+    JScrollPane scrollPaneText;
 
     public NoteWindow(){
 
@@ -16,22 +18,20 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
         Container container = getContentPane();
         JMenuBar menuBar = new JMenuBar();
 
-
         JMenu jmfile = new JMenu("FIle");
         JMenu jmedit = new JMenu("Edit");
         JMenu jmhelp = new JMenu("Help");
-        JPopupMenu jPopupMenu = new JPopupMenu();
 
         container.setLayout(new BorderLayout());
-        JScrollPane sbrText = new JScrollPane(textArea);
-        sbrText.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        sbrText.setVisible(true);
+        scrollPaneText = new JScrollPane(textArea);
+        scrollPaneText.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPaneText.setVisible(true);
 
         textArea.setFont(fnt);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
 
-        container.add(sbrText);
+        container.add(scrollPaneText);
 
         createMenuItem(jmfile, "New");
         createMenuItem(jmfile, "Open");
@@ -44,6 +44,19 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
         createMenuItem(jmedit, "Paste");
 
         createMenuItem(jmhelp, "About NotePad");
+
+        popupmenu = new JPopupMenu("Edit");
+        JMenuItem cut = new JMenuItem("Cut");
+        cut.addActionListener(this);
+        JMenuItem copy = new JMenuItem("Copy");
+        copy.addActionListener(this);
+        JMenuItem paste = new JMenuItem("Paste");
+        paste.addActionListener(this);
+        popupmenu.add(cut);
+        popupmenu.add(copy);
+        popupmenu.add(paste);
+        textArea.add(popupmenu);
+        textArea.addMouseListener(this);
 
 
         menuBar.add(jmfile);
@@ -170,18 +183,8 @@ public class NoteWindow extends JFrame implements  ActionListener, WindowListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        JPopupMenu jedit = new JPopupMenu("ListCopy");
 
-        createMenuItem(jedit, "Cut");
-        createMenuItem(jedit, "Copy");
-        createMenuItem(jedit, "Paste");
-
-
-
-        if(e.isPopupTrigger()){
-            add(jedit,e.getX(),e.getY());
-        }
-
+            popupmenu.show(textArea, e.getX(), e.getY());
 
     }
 
